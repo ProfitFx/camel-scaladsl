@@ -1,0 +1,145 @@
+/**
+  * Created by smakhetov on 02.06.2016.
+  */
+/**
+  * Created by smakhetov on 25.02.2016.
+  */
+
+
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.Logger
+import com.ibm.mq.jms.MQQueueConnectionFactory
+import com.ibm.mq.jms._
+import com.typesafe.config.ConfigFactory
+import org.apache.camel.component.jms.JmsComponent
+import org.apache.camel.component.jms.JmsComponent
+import org.apache.camel.impl.{DefaultCamelContext, SimpleRegistry}
+import org.apache.commons.dbcp2.BasicDataSource
+import org.apache.commons.dbcp2.BasicDataSource
+
+import org.slf4j.LoggerFactory
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.Logger
+
+
+
+object CamelApplication {
+
+
+  def main(args: Array[String]) = {
+    val conf = ConfigFactory.load()
+    val root: Logger = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME).asInstanceOf[Logger]
+    root.setLevel(Level.INFO);
+
+    val rg = new SimpleRegistry
+
+    val ds = new BasicDataSource {
+      setDriverClassName("org.postgresql.Driver")
+      setUrl(conf.getString("db.url"))
+      setUsername(conf.getString("db.username"))
+      setPassword(conf.getString("db.password"))
+    }
+    rg.put("postgresRoute", ds)
+
+    val ds1 = new BasicDataSource {
+      setDriverClassName("org.postgresql.Driver")
+      setUrl(conf.getString("db1.url"))
+      setUsername(conf.getString("db1.username"))
+      setPassword(conf.getString("db1.password"))
+    }
+    rg.put("postgresRoute1", ds1)
+
+    val connectionFactory = new MQQueueConnectionFactory {
+      setHostName(conf.getString("wmq.host"))
+      setPort(conf.getInt("wmq.port"))
+      setTransportType(1)//(JMSC.MQJMS_TP_CLIENT_MQ_TCPIP)
+      setQueueManager(conf.getString("wmq.qmname"))
+      setChannel(conf.getString("wmq.channel"))
+    }
+
+    val context = new DefaultCamelContext(rg)
+    context.setUseMDCLogging(true)
+    context.addComponent("test-jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory))
+    context.addRoutes(new JMSRead())
+    context.start()
+    Thread.currentThread.join()
+  }
+}
+
+
+//ds.setUrl("jdbc:postgresql://puop-client.dev.centre-it.com:5432/logcollect")
+//ds.setUrl("jdbc:postgresql://puop-client:5432/arm-minister")
+//ds.setUsername("poup")
+//ds.setUsername("puop")
+
+//connectionFactory.setHostName("impop-ig-stand.dev.centre-it.com")
+//connectionFactory.setPort(1414)
+//connectionFactory.setQueueManager("SYNC.IISVVT.QM")
+//connectionFactory.setChannel("APP.SVRCONN")
+
+//    connectionFactory.setHostName(conf.getString("wmq.host"))
+//    connectionFactory.setPort(conf.getInt("wmq.port"))
+//    connectionFactory.setTransportType(1)//(JMSC.MQJMS_TP_CLIENT_MQ_TCPIP)
+//    connectionFactory.setQueueManager(conf.getString("wmq.qmname"))
+//    connectionFactory.setChannel(conf.getString("wmq.channel"))
+
+
+
+//object XMLTest {// extends App {
+//  val s = """<?xml version="1.0" encoding="UTF-8"?>
+//            <tns:Envelope xmlns:tns="http://www.w3.org/2003/05/soap-envelope" xmlns:ns2="urn:EEC:Interaction:v1.0:Service:Util:Journal" xmlns:wsa="http://www.w3.org/2005/08/addressing">
+//            	<tns:Header>
+//            		<wsa:To>EAEU://EEC/SR/LOG/PUT</wsa:To>
+//            		<wsa:From>
+//            			<wsa:Address>EAEU://EEC/SR/LOG/SERVICE/</wsa:Address>
+//            		</wsa:From>
+//            		<wsa:Action>int://SR/LOG/SYNC</wsa:Action>
+//            		<wsa:MessageID>urn:uuid:0f5b4e38-3587-4435-8bf1-eb0984922038</wsa:MessageID>
+//            		<int:Integration xmlns:int="urn:EEC:Interaction:v1.0">
+//            			<int:TrackID>urn:uuid:83b6d623-b829-48a9-9617-e5a5cb8261ce</int:TrackID>
+//            			<int:AcceptTime>2016-02-26T15:59:25+05:00</int:AcceptTime>
+//            		</int:Integration>
+//            	</tns:Header>
+//            	<tns:Body>
+//            		<ns2:putJournal>
+//            			<ns2:Journal>
+//            				<Rec xmlns="urn:EEC:Interaction:v1.0:Service:Util:Journal">
+//            					<MessageDetail>
+//            						<ProcessInfo>
+//            							<Code>P.MM.01</Code>
+//            							<Version>0.1</Version>
+//            							<ProcedureCode>P.MM.01.PRC.004</ProcedureCode>
+//            							<TransactionCode>P.MM.01.TRN.004</TransactionCode>
+//            							<MessageCode>P.MM.01.MSG.006</MessageCode>
+//            						</ProcessInfo>
+//            						<Action>int://CP/P.MM.01/0.1/P.MM.01.PRC.004/P.MM.01.TRN.004/P.MM.01.MSG.006</Action>
+//            						<Routing>
+//            							<To Segment="EEC">EAEU://EEC/SR/BR/RU</To>
+//            							<ReplyTo>EAEU://EEC/SR/NSI</ReplyTo>
+//            							<FromSegment>EEC</FromSegment>
+//            						</Routing>
+//            						<MessageID>urn:uuid:4c1c4344-a9fa-4481-a3bb-4439def053b3</MessageID>
+//            						<RelatesTo RelatesAction="">urn:uuid:0ce80ce1-f5f4-4a3a-9bbf-678fe89a80b7</RelatesTo>
+//            						<ConversationID>urn:uuid:061425d2-1329-4865-b929-a4a93f68b492</ConversationID>
+//            						<ProcedureID>urn:uuid:ce26e6c0-d111-4cab-a6de-8df943526ec2</ProcedureID>
+//            						<MessageType>SR</MessageType>
+//            					</MessageDetail>
+//            					<OperationDt>2016-02-26T15:59:25.211+05:00</OperationDt>
+//            					<TrackID>UNKNOWN</TrackID>
+//            					<AcceptTime>2016-02-26T15:59:25.211+05:00</AcceptTime>
+//            					<Source>Универсальный сервис</Source>
+//            					<Receiver>Компонент подготовки сообщения</Receiver>
+//            					<Status>SUCCESS</Status>
+//            					<Msg>В сообщение будет добавлен интеграционный заголовок</Msg>
+//            					<IDRef>0f5b4e38-3587-4435-8bf1-eb0984922038</IDRef>
+//            				</Rec>
+//            			</ns2:Journal>
+//            			<ns2:SourceSegment>SYNC</ns2:SourceSegment>
+//            		</ns2:putJournal>
+//            	</tns:Body>
+//            </tns:Envelope>"""
+//
+//  val body = xml.XML.loadString(s)
+//  val operationdt = (body \ "Body" \\ "To" \ "@Segment").text
+//  println(operationdt)
+//}
