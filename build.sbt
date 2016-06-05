@@ -9,9 +9,16 @@ val camelVersion = "2.13.2"
 libraryDependencies ++= Seq(
   "org.apache.camel" % "camel-core" % camelVersion,
   "org.apache.camel" % "camel-scala" % camelVersion,
+  "org.apache.camel" % "camel-quartz" % camelVersion,
+  "org.apache.camel" % "camel-jms" % camelVersion,
+  "org.apache.activemq" % "activemq-core" % "5.7.0"
+,
+"ch.qos.logback" % "logback-classic" % "1.1.2",
+  "org.slf4j" % "slf4j-api" % "1.7.7",
   "com.typesafe" % "config" % "1.3.0"
   )
 
+//libraryDependencies += "org.apache.activemq" % "activemq-camel" % "5.13.3"
 
 //libraryDependencies ++= Seq(
 //  "ch.qos.logback" % "logback-classic" % "1.1.2",
