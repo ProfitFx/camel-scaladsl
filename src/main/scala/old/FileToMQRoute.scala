@@ -1,3 +1,5 @@
+package old
+
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 import org.apache.camel.scala.dsl.languages.Languages
 

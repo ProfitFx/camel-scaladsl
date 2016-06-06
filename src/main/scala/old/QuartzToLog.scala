@@ -1,6 +1,6 @@
-import ch.qos.logback.classic.{Level, Logger}
+package old
+
 import org.apache.camel.impl.DefaultCamelContext
-import org.slf4j.LoggerFactory
 
 /**
   * Created by Enot on 05.06.2016.

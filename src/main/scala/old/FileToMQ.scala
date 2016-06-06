@@ -1,11 +1,13 @@
-import org.apache.camel.impl.DefaultCamelContext
+package old
+
 import org.apache.activemq.ActiveMQConnectionFactory
 import org.apache.camel.component.jms.JmsComponent
+import org.apache.camel.impl.DefaultCamelContext
 
 /**
   * Created by Enot on 05.06.2016.
   */
-object FileToMQ extends App{
+object FileToMQ {
 //  val connectionFactory = new MQQueueConnectionFactory {
 //    setHostName(conf.getString("wmq.host"))
 //    setPort(conf.getInt("wmq.port"))
