@@ -4,7 +4,7 @@ version := "1.0"
 
 scalaVersion := "2.11.8"
 
-val camelVersion = "2.13.2"
+val camelVersion = "2.17.1"
 
 libraryDependencies ++= Seq(
   "org.apache.camel" % "camel-core" % camelVersion,
