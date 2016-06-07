@@ -1,4 +1,5 @@
 import org.apache.camel.impl.DefaultCamelContext
+import org.apache.camel.scala.dsl.builder.ScalaRouteBuilder
 
 /**
   * Created by smakhetov on 06.06.2016.
@@ -6,9 +7,17 @@ import org.apache.camel.impl.DefaultCamelContext
 
 
 
-object FromFileToFileApp extends App{
+object FromFileToFileApp{
+
   val context = new DefaultCamelContext
-  context.addRoutes(new FromFileToFileRoute)
+  context.addRoutes(FromFileToFileRoute)
   context.start
   Thread.currentThread.join
+
+  object FromFileToFileRoute extends ScalaRouteBuilder(context){
+    """file:inbox?charset=utf-8""" ==> {
+      to ("file:outbox?charset=Windows-1251")
+    }
+  }
 }
+
