@@ -6,7 +6,7 @@ import org.apache.camel.scala.dsl.builder.RouteBuilderSupport
 /**
  * A Main to run Camel with MyRouteBuilder
  */
-object MyRouteMain extends App with RouteBuilderSupport {
+object MyRouteMain extends RouteBuilderSupport {
 
     val main = new Main()
     // create the CamelContext
