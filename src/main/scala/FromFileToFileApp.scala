@@ -6,7 +6,7 @@ import org.apache.camel.scala.dsl.builder.{RouteBuilderSupport, ScalaRouteBuilde
   * Created by smakhetov on 06.06.2016.
   */
 
-object FromFileToFileApp extends App with RouteBuilderSupport {
+object FromFileToFileApp extends RouteBuilderSupport { //App with
   //Создаем класс и контекст в нем
   val mainApp = new Main
   val context = mainApp.getOrCreateCamelContext

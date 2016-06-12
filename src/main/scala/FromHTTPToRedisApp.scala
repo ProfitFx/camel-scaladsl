@@ -7,7 +7,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer
   * Created by smakhetov on 07.06.2016.
   */
 
-object FromHTTPToRedis extends App with RouteBuilderSupport{
+object FromHTTPToRedisApp extends App with RouteBuilderSupport{
   val mainApp = new Main
   //Прописываем вместо стандартного кастомный stringSerializer для redis
   mainApp.bind("stringSerializer",new StringRedisSerializer)
@@ -26,10 +26,14 @@ class FromHTTPToRedisRoute  (override val context: CamelContext) extends ScalaRo
       exchange.getOut.setHeader("CamelRedis.Value",exchange.getIn.getBody(classOf[String]))
     })
     // Отправляем данные в Redis
-    to ("""spring-redis://172.16.7.58:6379?serializer=#stringSerializer""")
+   // to ("""spring-redis://172.16.7.58:6379?serializer=#stringSerializer""")
+    to ("""spring-redis://192.168.3.45:6379?serializer=#stringSerializer""")
   }
 }
 
+/*
+1) Just disable protected mode sending the command 'CONFIG SET protected-mode no' from the loopback interface by connecting to Redis from the sam
+ */
 
 //val addr = "http:www.google.com/finance/info?q=NASDAQ%3aGOOG"
 //object FromHTTPToRedis{// extends App{
