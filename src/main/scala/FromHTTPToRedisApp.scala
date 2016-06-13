@@ -7,7 +7,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer
   * Created by smakhetov on 07.06.2016.
   */
 
-object FromHTTPToRedisApp extends App with RouteBuilderSupport{
+object FromHTTPToRedisApp extends  RouteBuilderSupport{//App with
   val mainApp = new Main
   //Прописываем вместо стандартного кастомный stringSerializer для redis
   mainApp.bind("stringSerializer",new StringRedisSerializer)
