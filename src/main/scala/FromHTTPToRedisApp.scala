@@ -7,6 +7,18 @@ import org.springframework.data.redis.serializer.StringRedisSerializer
   * Created by smakhetov on 07.06.2016.
   */
 
+/**
+  * В данном примере рассмотрим более сложный случай.
+  * По таймеру будем собирать даные о курсе доллара и отправлять в redis.
+  * Нам понадобится некоторая логика для отправки сообщения в Redis.
+  * В общем случае, у сообщения есть тело и заголовки.
+  * Для того, чтобы выпонить действия над сообщением(установить тело сообщения и заголовки), существует метод process.
+  * Для Redis отправка значений производится с помощью пары заголовков CamelRedis.Key/CamelRedis.Value
+  * По умолчанию, выполняется команда set CamelRedis.Key CamelRedis.Value
+  * Таким образом, нам необходимо извлеч тело сообщения, которое возвращает http запрос и сделать его заголовком CamelRedis.Value
+  * Ключ будем просто генерировать уникальный
+  */
+
 object FromHTTPToRedisApp extends  RouteBuilderSupport{//App with
   val mainApp = new Main
   //Прописываем вместо стандартного кастомный stringSerializer для redis
@@ -16,7 +28,7 @@ object FromHTTPToRedisApp extends  RouteBuilderSupport{//App with
   mainApp.run
 }
 
-class FromHTTPToRedisRoute  (override val context: CamelContext) extends ScalaRouteBuilder(context) {
+class FromHTTPToRedisRoute (override val context: CamelContext) extends ScalaRouteBuilder(context) {
   //По таймеру, раз в минуту обращаемся к HTTP сервису
   """quartz://groupName/timerName?cron=0+0/1+*+*+*+?""" ==> {
     to("http://www.google.com/finance/info?q=CURRENCY%3aUSDRUB")
@@ -26,7 +38,7 @@ class FromHTTPToRedisRoute  (override val context: CamelContext) extends ScalaRo
       exchange.getOut.setHeader("CamelRedis.Value",exchange.getIn.getBody(classOf[String]))
     })
     // Отправляем данные в Redis
-   // to ("""spring-redis://172.16.7.58:6379?serializer=#stringSerializer""")
+  // #stringSerializer - объявленный нами ранее кастомный сериалайзер
     to ("""spring-redis://192.168.3.45:6379?serializer=#stringSerializer""")
   }
 }

@@ -12,6 +12,7 @@ libraryDependencies ++= Seq(
   "org.apache.camel" % "camel-quartz" % camelVersion,
   "org.apache.camel" % "camel-spring-redis" % camelVersion,
   "org.apache.camel" % "camel-http" % camelVersion,
+  "org.apache.camel" % "camel-jetty" % camelVersion,
   "ch.qos.logback" % "logback-classic" % "1.1.2",
   "org.slf4j" % "slf4j-api" % "1.7.7"
   )
