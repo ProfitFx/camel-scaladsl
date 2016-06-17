@@ -17,7 +17,6 @@ class FromMQToDBAppRoute(override val context: CamelContext) extends ScalaRouteB
  errorHandler(deadLetterChannel("mock:error"))
 
   """quartz://groupName/timerName?cron=0/5+*+*+*+*+?""" ==>  {
-
     to ("log:123")
   }
 }
