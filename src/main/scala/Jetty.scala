@@ -21,12 +21,11 @@ object JettyApp extends App with RouteBuilderSupport{
   mainApp.run
 }
 
-class JettyRoute(override val context: CamelContext) extends ScalaRouteBuilder(context) {
-
+class JettyRoute(context: CamelContext) extends ScalaRouteBuilder(context) {
   // Определяем порт и адрес сервиса
   """jetty:http://0.0.0.0:1234/myapp/myservice""" ==> {
     process((exchange: Exchange) => {
-      // Извлекаем значение параметра
+      // Извлекаем значение параметра uuid из get запроса к сервису
       val uuidParam = exchange.getIn.getHeader("uuid")
       // Определяем паттерн для параметра
       val pattern = """[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}""".r
@@ -36,10 +35,11 @@ class JettyRoute(override val context: CamelContext) extends ScalaRouteBuilder(c
         case pattern() => s"$uuidParam"
         case _ => s"Uuid parameter format is not valid"
       }
-      // Определяем тип контента как xml
+      // Определяем тип возвращаемого контента как xml
       exchange.getOut().setHeader(Exchange.CONTENT_TYPE,"text/xml; charset=utf-8")
-      // Возвращаем xml с ответом
-      exchange.getOut().setBody(s"<uuid>$responseText</uuid>")
+      // Возвращаем xml с ответом.
+      exchange.getOut().setBody(<uuid>{responseText}</uuid>)
+      //вариант отправки параметра как строки s"<uuid>$responseText</uuid>" тоже рабочий.
     })
   }
 }

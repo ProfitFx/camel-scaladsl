@@ -6,16 +6,27 @@ scalaVersion := "2.11.8"
 
 val camelVersion = "2.17.1"
 
+
+
 libraryDependencies ++= Seq(
+  // Компоненты для Camel
   "org.apache.camel" % "camel-core" % camelVersion,
   "org.apache.camel" % "camel-scala" % camelVersion,
+  // Для каждого компонента своя зависимость
   "org.apache.camel" % "camel-quartz" % camelVersion,
   "org.apache.camel" % "camel-spring-redis" % camelVersion,
   "org.apache.camel" % "camel-http" % camelVersion,
   "org.apache.camel" % "camel-jetty" % camelVersion,
+  "org.apache.camel" % "camel-jms" % camelVersion,
+  "org.apache.camel" % "camel-sql" % camelVersion,
+  "org.apache.camel" % "camel-jdbc" % camelVersion,
+  //Добавим логгирование
   "ch.qos.logback" % "logback-classic" % "1.1.2",
-  "org.slf4j" % "slf4j-api" % "1.7.7"
-  )
+  "org.slf4j" % "slf4j-api" % "1.7.7",
+  //Компонент для работы xml в скала
+  "org.scala-lang.modules" % "scala-xml_2.11" % "1.0.5"
+)
+
 
 //  "org.apache.camel" % "camel-jms" % camelVersion,
 //  "org.apache.activemq" % "activemq-core" % "5.7.0",

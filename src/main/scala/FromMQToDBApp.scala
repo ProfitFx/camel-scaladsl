@@ -5,14 +5,14 @@ import org.apache.camel.scala.dsl.builder.{RouteBuilderSupport, ScalaRouteBuilde
 /**
   * Created by Enot on 13.06.2016.
   */
-object FromMQToDBApp extends  RouteBuilderSupport {//App with
+object FromMQToDBApp extends RouteBuilderSupport {//App with
   val mainApp = new Main
   val context = mainApp.getOrCreateCamelContext
   mainApp.addRouteBuilder(new FromMQToDBAppRoute(context))
   mainApp.run
 }
 
-class FromMQToDBAppRoute(override val context: CamelContext) extends ScalaRouteBuilder(context) {
+class FromMQToDBAppRoute(context: CamelContext) extends ScalaRouteBuilder(context) {
 
  errorHandler(deadLetterChannel("mock:error"))
 

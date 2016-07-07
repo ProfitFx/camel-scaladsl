@@ -28,7 +28,7 @@ object FromHTTPToRedisApp extends  RouteBuilderSupport{//App with
   mainApp.run
 }
 
-class FromHTTPToRedisRoute (override val context: CamelContext) extends ScalaRouteBuilder(context) {
+class FromHTTPToRedisRoute (context: CamelContext) extends ScalaRouteBuilder(context) {
   //По таймеру, раз в минуту обращаемся к HTTP сервису
   """quartz://groupName/timerName?cron=0+0/1+*+*+*+?""" ==> {
     to("http://www.google.com/finance/info?q=CURRENCY%3aUSDRUB")
