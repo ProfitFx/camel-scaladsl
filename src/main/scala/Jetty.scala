@@ -14,7 +14,7 @@ import org.apache.camel.scala.dsl.builder.{RouteBuilderSupport, ScalaRouteBuilde
   *
   */
 
-object JettyApp extends App with RouteBuilderSupport{
+object JettyApp extends  RouteBuilderSupport{ //App with
   val mainApp = new Main
   val context = mainApp.getOrCreateCamelContext
   mainApp.addRouteBuilder(new JettyRoute(context))
