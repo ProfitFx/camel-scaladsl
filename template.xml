@@ -1,0 +1,4 @@
+<xml>
+    <action>mq send</action>
+    <content>Some content</content>
+</xml>

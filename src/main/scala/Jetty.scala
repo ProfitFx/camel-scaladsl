@@ -24,6 +24,7 @@ object JettyApp extends  RouteBuilderSupport{ //App with
 class JettyRoute(context: CamelContext) extends ScalaRouteBuilder(context) {
   // Определяем порт и адрес сервиса
   """jetty:http://0.0.0.0:1234/myapp/myservice""" ==> {
+    delay(2 seconds)
     process((exchange: Exchange) => {
       // Извлекаем значение параметра uuid из get запроса к сервису
       val uuidParam = exchange.getIn.getHeader("uuid")

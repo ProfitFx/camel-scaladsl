@@ -24,7 +24,10 @@ libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "1.1.2",
   "org.slf4j" % "slf4j-api" % "1.7.7",
   //Компонент для работы xml в скала
-  "org.scala-lang.modules" % "scala-xml_2.11" % "1.0.5"
+  "org.scala-lang.modules" % "scala-xml_2.11" % "1.0.5",
+  // Драйвер БД H2
+  "com.h2database" % "h2" % "1.4.192",
+  "org.apache.commons" % "commons-dbcp2" % "2.1.1"
 )
 
 
