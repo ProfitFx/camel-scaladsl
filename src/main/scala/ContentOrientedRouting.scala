@@ -25,7 +25,7 @@ class ContentOrientedRouting(context: CamelContext) extends ScalaRouteBuilder(co
     "ActiveMQ"    -> "jms-amq:queue:inbox",
     "H2"          -> "direct:h2db",
     "someAdress"  -> "direct:outbox")
-
+  // Вынесем обработку в отдельную функцию
   val addRoutingAction = (exchange: Exchange) => {
     // Получим значение тега "To" из XML, который пришла на вход
     val body = exchange.getIn.getBody(classOf[String])

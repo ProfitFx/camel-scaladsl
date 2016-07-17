@@ -27,7 +27,9 @@ libraryDependencies ++= Seq(
   "org.scala-lang.modules" % "scala-xml_2.11" % "1.0.5",
   // Драйвер БД H2
   "com.h2database" % "h2" % "1.4.192",
-  "org.apache.commons" % "commons-dbcp2" % "2.1.1"
+  "org.apache.commons" % "commons-dbcp2" % "2.1.1",
+  // Драйвер для брокера activemq
+  "org.apache.activemq" % "activemq-client" % "5.13.3"
 )
 
 
