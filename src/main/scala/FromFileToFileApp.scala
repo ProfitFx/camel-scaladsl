@@ -12,7 +12,6 @@
   * Класс с маршрутами можно вынести в отдельный файл.
   * файл src/main/scala/FromFileToFileApp.scala
   * extends App позволяет производить запуск командой "sbt run"
-  *
   */
 
 import org.apache.camel.CamelContext

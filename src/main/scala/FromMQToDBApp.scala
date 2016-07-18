@@ -1,3 +1,14 @@
+/*
+В отдельный пример выделил работу с очередью и БД.
+Проблема в том, что нужно как то настроить их
+Если в предыдущих примерах настрока проводилась с помощью параметров в строке  endpoint, то здесь нужно заранее создать объект,
+сделать на его основе компонент и использовать далее.
+Различие очереди и БД в том, что для БД используем BasicDataSource, и создаем dataSourceName, который является частью URI camel-jdbc
+а для очереди используем JmsComponent и создаем на его основе новый компонент, с кастомным названием.
+ */
+
+
+
 import java.text.SimpleDateFormat
 import java.util.{UUID, Date}
 import org.apache.camel.component.jms.JmsComponent
@@ -8,6 +19,8 @@ import org.apache.camel.{CamelContext, Exchange}
 import org.apache.commons.dbcp2.BasicDataSource
 // Для работы с месседж-брокером нужно импортировать соответствующий ConnectionFactory класс
 import org.apache.activemq.ActiveMQConnectionFactory
+
+
 
 /**
   * Created by Enot on 13.06.2016.
@@ -30,7 +43,7 @@ object FromMQToDBApp extends App with RouteBuilderSupport {
   mainApp.run
 }
 
-// данный класс реализует чтение сообщения из очереди и запись его в БД
+// Данный класс реализует чтение сообщения из очереди и запись его в БД
 class FromMQToDBAppRoute(context: CamelContext) extends ScalaRouteBuilder(context) {
   // Читаем сообщение из очереди. Компонент называется также, как мы его назвали ранее - "amq-jms", имя очереди передается как параметр
   // Для каждого брокера необходимо создавать свой компонент
@@ -50,6 +63,56 @@ class FromMQToDBAppRoute(context: CamelContext) extends ScalaRouteBuilder(contex
 
   }
 }
+
+/*
+Для других БД нужно, соответственно, добавить библиотеку в build.sbt,
+определить имя класса драйвера, url, возможно понадобятся другие свойства подключения, к примеру,
+Имя пользователя и пароль.
+Для Postgres
+
+    val ds = new BasicDataSource {
+      setDriverClassName("org.postgresql.Driver")
+      setUrl(conf.getString("jdbc:postgresql://myhost:5432/mydb"))
+      setUsername(conf.getString("myusername"))
+      setPassword(conf.getString("mypassword"))
+      }
+
+      build.sbt
+      libraryDependencies += "org.postgresql" % "postgresql" % "9.4.1207"
+
+С очередями несколько сложнее.
+Для некоторых библиотеки не открыты для доступа в репозиториях и используются *.jar файлы, подкладываемыее в папку lib проекта.
+В любом случае, нужно получить connection factory
+К примеру, для IBM Websphere MQ
+    val cf = new MQQueueConnectionFactory {
+      setHostName("myhost")
+      setPort(1414)
+      setTransportType(1)
+      setQueueManager("myqmname")
+      setChannel("mychannel")
+    }
+
+    Для oracle weblogic jms еще интереснее
+    Если взять за основу инструкцию https://blogs.oracle.com/soaproactive/entry/how_to_create_a_simple
+то объявление компонента будет такое:
+
+  val env = new util.Hashtable[String, String]
+  env.put(javax.naming.Context.INITIAL_CONTEXT_FACTORY, "weblogic.jndi.WLInitialContextFactory")
+  env.put(javax.naming.Context.PROVIDER_URL, "t3://myhost:7001")
+  val ic: InitialContext = new InitialContext(env)
+  val connectionFactory = ic.lookup("jms/TestConnectionFactory").asInstanceOf[QueueConnectionFactory]
+  // где jms/TestConnectionFactory - jndi для ConnectionFactory"
+
+  mainApp.bind("ora-jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory))
+
+    а endpoint URI удет такого формата: """ora-jms:queue:./TestJMSModule!TestJMSQueue"""
+    где ./ обозначает текущий сервер, "TestJMSModule" JNDI имя модуля "TestJMSQueue" - JNDI имя очереди
+
+ */
+
+
+
+
 //errorHandler(deadLetterChannel("file:error"))
 //to ("log:123")
 // to("log:123")
