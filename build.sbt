@@ -18,7 +18,6 @@ libraryDependencies ++= Seq(
   "org.apache.camel" % "camel-http" % camelVersion,
   "org.apache.camel" % "camel-jetty" % camelVersion,
   "org.apache.camel" % "camel-jms" % camelVersion,
-  "org.apache.camel" % "camel-sql" % camelVersion,
   "org.apache.camel" % "camel-jdbc" % camelVersion,
   //Добавим логгирование
   "ch.qos.logback" % "logback-classic" % "1.1.2",
@@ -32,7 +31,7 @@ libraryDependencies ++= Seq(
   "org.apache.activemq" % "activemq-client" % "5.13.3"
 )
 
-
+//  "org.apache.camel" % "camel-sql" % camelVersion,
 //  "org.apache.camel" % "camel-jms" % camelVersion,
 //  "org.apache.activemq" % "activemq-core" % "5.7.0",
 //  "com.typesafe" % "config" % "1.3.0"

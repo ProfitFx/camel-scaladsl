@@ -14,39 +14,50 @@ import org.apache.activemq.ActiveMQConnectionFactory
   */
 
 object FromMQToDBApp extends App with RouteBuilderSupport {
-
+  val mainApp = new Main
+  // Для работы с БД необходимо создать объект и передать ему свойства соединения
   val ds = new BasicDataSource
   ds.setDriverClassName("org.h2.Driver")
   ds.setUrl("jdbc:h2:./h2db")
-  //ds.setUsername("")
-  //ds.setPassword("")
-  val mainApp = new Main
+  // Добавим бд в приложение, далее в названии получателя будем использовать "h2db"
   mainApp.bind("h2db",ds)
-  val connectionFactory = new ActiveMQConnectionFactory("tcp://192.168.3.38:61616")
-  mainApp.bind("amq-jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory))
+  //Для работы с очередью создадим MQConnectionFactory
+  val cf= new ActiveMQConnectionFactory("tcp://192.168.3.38:61616")
+  // создадим компонент для работы с очередью
+  mainApp.bind("amq-jms", JmsComponent.jmsComponentAutoAcknowledge(cf))
   val context = mainApp.getOrCreateCamelContext
   mainApp.addRouteBuilder(new FromMQToDBAppRoute(context))
   mainApp.run
 }
 
+// данный класс реализует чтение сообщения из очереди и запись его в БД
 class FromMQToDBAppRoute(context: CamelContext) extends ScalaRouteBuilder(context) {
+  // Читаем сообщение из очереди. Компонент называется также, как мы его назвали ранее - "amq-jms", имя очереди передается как параметр
+  // Для каждого брокера необходимо создавать свой компонент
+  """amq-jms:queue:TESTQ""" ==> {
 
-  errorHandler(deadLetterChannel("file:error"))
-//"""amq-jms:queue:TESTQ"""
-  """timer:name?period=5000""" ==> {
-    setBody("123")
-    to("log:123")
     process((exchange: Exchange) => {
+      // Генерим uuid, дату/время и извлекаем тело сообщения
       val uuid = UUID.randomUUID
       val time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())
       val messageBody = exchange.getIn.getBody(classOf[String])
+      // формируем запрос с параметрами
       exchange.getOut.setBody(s"INSERT INTO PUBLIC.MESSAGETABLE (ID, DATETIME, BODY) VALUES('$uuid', '$time', '$messageBody')")
     })
-    //to ("log:123")
+    // Отправляем подготовленный запрос в бд
+    // Компонент называется jdbc, далее указывается конкретный DataSource
     to("jdbc:h2db")
-   // to("log:123")
+
   }
 }
+//errorHandler(deadLetterChannel("file:error"))
+//to ("log:123")
+// to("log:123")
+//"""timer:name?period=5000""" ==> {
+//    setBody("123")
+//    to("log:123")
+//ds.setUsername("")
+//ds.setPassword("")
 //new java.util.Date()
 //1970-01-01 05:00:00
 //  val ds = new BasicDataSource
