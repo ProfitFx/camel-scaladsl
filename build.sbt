@@ -6,8 +6,6 @@ scalaVersion := "2.11.8"
 
 val camelVersion = "2.17.1"
 
-
-
 libraryDependencies ++= Seq(
   // Компоненты для Camel
   "org.apache.camel" % "camel-core" % camelVersion,

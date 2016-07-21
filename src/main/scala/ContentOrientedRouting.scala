@@ -37,20 +37,27 @@ class ContentOrientedRouting(context: CamelContext) extends ScalaRouteBuilder(co
     exchange.getOut.setHeader("Destination", dest)
   }
 
-  """direct:inbox1""" ==> {
+  // точка входа. Здесь может быть файл, очередь, или другой источник xml
+  """direct:inbox""" ==> {
     process(addRoutingAction)
     // извлекаем из заголовка "Destination" endpoint и отправляем туда сообщение
     recipients(_.in("Destination"))
   }
   // Описываем логику для разных endpoint
+  // Обработка сообщений для очереди
   """jms-amq:queue:inbox""" ==> {???}
 
+  // Обработка сообщения для БД
   """direct:h2db""" ==> {
     process((exchange: Exchange) => {???})
     to ("jdbc:h2db")
   }
-  """direct:outbox""" ==> {???}
 
+  """direct:outbox""" ==> {
+    to("file:someFile", "log:Somelog")
+  }
+
+  // Обработка сообщений с ошибками
   """direct:trash""" ==> {???}
 
 }
