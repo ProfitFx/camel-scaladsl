@@ -37,6 +37,14 @@ class FromFileToFileRoute(context: CamelContext) extends ScalaRouteBuilder(conte
   }
 }
 
+class FromFileToFileRoute1(context: CamelContext) extends ScalaRouteBuilder(context) {
+  // Читаем содержимое файла в одной кодировке из папки "inbox"
+  """file:inbox?charset=utf-8""" ==> {
+    // Пишем в другой кодировке в директорию "outbox"
+    to ("file:outbox?charset=Windows-1251")
+  }
+}
+
 /*
    в данном маршруте не происходит никаких преобразований с содержимым сообщения, отсутствует маршрутизация.
    после запуска приложеия командой "sbt run" в папке проекта будут автоматически созданы папки "inbox", "outbox"

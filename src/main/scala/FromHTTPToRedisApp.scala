@@ -19,7 +19,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer
 Ключ будем просто генерировать уникальный
   */
 
-object FromHTTPToRedisApp extends  RouteBuilderSupport{//App with
+object FromHTTPToRedisApp extends App with RouteBuilderSupport{//
   val mainApp = new Main
   //Прописываем вместо стандартного кастомный stringSerializer для redis
   mainApp.bind("stringSerializer",new StringRedisSerializer)
@@ -30,16 +30,24 @@ object FromHTTPToRedisApp extends  RouteBuilderSupport{//App with
 
 class FromHTTPToRedisRoute (context: CamelContext) extends ScalaRouteBuilder(context) {
   //По таймеру, раз в минуту обращаемся к HTTP сервису
-  """quartz://groupName/timerName?cron=0+0/1+*+*+*+?""" ==> {
+  """quartz:timerName?cron=0+0/1+*+*+*+?""" ==> {
+
+    // Простое сообщение, добавленное в лог
+    log("Запрос к сервису")
+    // Запрос к сервису
     to("http://www.google.com/finance/info?q=CURRENCY%3aUSDRUB")
     // создаем пару ключ-значение для redis, записываем в хедер
     process((exchange: Exchange) => {
       exchange.getOut.setHeader("CamelRedis.Key",System.currentTimeMillis())
       exchange.getOut.setHeader("CamelRedis.Value",exchange.getIn.getBody(classOf[String]))
     })
+    // Логгирование как endpoint позволяет просмотреть сообщение и его атрибуты
+    // В данном примере тело сообщения будет пусто (Body: [Body is null]])
+    to("log:FromHTTPToRedisApp")
     // Отправляем данные в Redis
-  // #stringSerializer - объявленный нами ранее кастомный сериалайзер
-    to ("""spring-redis://192.168.3.45:6379?serializer=#stringSerializer""")
+    // #stringSerializer - объявленный нами ранее кастомный сериалайзер
+    to("""spring-redis://172.16.7.58:6379?serializer=#stringSerializer""")
+
   }
 }
 

@@ -54,6 +54,7 @@ class ContentOrientedRouting(context: CamelContext) extends ScalaRouteBuilder(co
   }
 
   """direct:outbox""" ==> {
+    // параллельная отправка сообщения в файл и в лог
     to("file:someFile", "log:Somelog")
   }
 

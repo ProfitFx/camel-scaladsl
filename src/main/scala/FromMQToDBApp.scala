@@ -48,7 +48,6 @@ class FromMQToDBAppRoute(context: CamelContext) extends ScalaRouteBuilder(contex
   // Читаем сообщение из очереди. Компонент называется также, как мы его назвали ранее - "amq-jms", имя очереди передается как параметр
   // Для каждого брокера необходимо создавать свой компонент
   """amq-jms:queue:TESTQ""" ==> {
-
     process((exchange: Exchange) => {
       // Генерим uuid, дату/время и извлекаем тело сообщения
       val uuid = UUID.randomUUID
